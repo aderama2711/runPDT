@@ -60,7 +60,7 @@ double getCurrentValue(){
 int main(){
 	init();
 	ofstream outdata;
-	outdata.open("~/system.csv");
+	outdata.open("../system.csv");
 	if( !outdata){
 		cerr << "Error FILE" << endl;
 	}
