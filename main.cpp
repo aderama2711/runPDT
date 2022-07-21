@@ -73,7 +73,7 @@ int main(){
 		totalVirtualMem += memInfo.totalswap;
 		totalVirtualMem *= memInfo.mem_unit;
 		
-		long long virtualMemUsed = memInfo.totalram - memInfo.freeram;
+		long long virtualMemUsed;
 		//Add other values in next statement to avoid int overflow on right hand side...
 		virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
 		virtualMemUsed *= memInfo.mem_unit;
