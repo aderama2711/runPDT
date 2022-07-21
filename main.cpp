@@ -13,6 +13,7 @@ using std::ofstream;
 #include <ctime>
 #include <unistd.h>
 
+struct sysinfo memInfo;
 static unsigned long long lastTotalUser, lastTotalUserLow, lastTotalSys, lastTotalIdle;
 
 void init(){
@@ -65,15 +66,15 @@ int main(){
 	}
 	outdata << "Time,CPU used, RAM used, VRAM used" << std::endl;
 	while (true){
-		int sysinfo(struct sysinfo *info);
+        sysinfo (&memInfo);
 
-		std::cout << info.totalram * info.mem_unit;
+		std::cout << memInfo.totalram * memInfo.mem_unit;
 		
-		std::cout << info.totalswap * info.mem_unit;
+		std::cout << memInfo.totalswap * memInfo.mem_unit;
 
-		unsigned long physMemUsed = info.totalram * info.mem_unit - info.freeram * info.mem_unit;
+		unsigned long physMemUsed = memInfo.totalram * memInfo.mem_unit - memInfo.freeram * memInfo.mem_unit;
 
-		unsigned long virtualMemUsed = info.totalswap * info.mem_unit - info.freeswap * info.mem_unit;
+		unsigned long virtualMemUsed = memInfo.totalswap * memInfo.mem_unit - memInfo.freeswap * memInfo.mem_unit;
 		
 		double cpuused = getCurrentValue();
 	
