@@ -88,8 +88,9 @@ int main(){
 		
 		double cpuused = getCurrentValue();
 	
-	    time_t now = time(0);
-	    tm *ltm = localtime(&now);
+	    time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	    std::string snow( ctime( &now ) );
+	    snow = snow.substr(0,snow.length()-1);
 	    outdata << 5+ltm->tm_hour << ":" << 30+ltm->tm_min << ":" << ltm->tm_sec << "," << std::to_string(cpuused) << "," << std::to_string(physMemUsed) << "," << std::to_string(virtualMemUsed) << std::endl;
 	    
 	    sleep(1);
