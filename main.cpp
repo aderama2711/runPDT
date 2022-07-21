@@ -66,15 +66,25 @@ int main(){
 	}
 	outdata << "Time,CPU used, RAM used, VRAM used" << std::endl;
 	while (true){
-        sysinfo (&memInfo);
-
-		std::cout << memInfo.totalram * memInfo.mem_unit;
+		//VirtualMem
+		sysinfo (&memInfo);
+		long long totalVirtualMem = memInfo.totalram;
+		//Add other values in next statement to avoid int overflow on right hand side...
+		totalVirtualMem += memInfo.totalswap;
+		totalVirtualMem *= memInfo.mem_unit;
 		
-		std::cout << memInfo.totalswap * memInfo.mem_unit;
-
-		unsigned long physMemUsed = memInfo.totalram * memInfo.mem_unit - memInfo.freeram * memInfo.mem_unit;
-
-		unsigned long virtualMemUsed = memInfo.totalswap * memInfo.mem_unit - memInfo.freeswap * memInfo.mem_unit;
+		long long virtualMemUsed = memInfo.totalram - memInfo.freeram;
+		//Add other values in next statement to avoid int overflow on right hand side...
+		virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
+		virtualMemUsed *= memInfo.mem_unit;
+		
+		long long totalPhysMem = memInfo.totalram;
+		//Multiply in next statement to avoid int overflow on right hand side...
+		totalPhysMem *= memInfo.mem_unit;
+		
+		long long physMemUsed = memInfo.totalram - memInfo.freeram;
+		//Multiply in next statement to avoid int overflow on right hand side...
+		physMemUsed *= memInfo.mem_unit;
 		
 		double cpuused = getCurrentValue();
 	
