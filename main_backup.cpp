@@ -13,23 +13,7 @@ using std::ofstream;
 #include <ctime>
 #include <unistd.h>
 
-int sysinfo(struct sysinfo *info);
-struct sysinfo {
-               long uptime;             /* Seconds since boot */
-               unsigned long loads[3];  /* 1, 5, and 15 minute load averages */
-               unsigned long totalram;  /* Total usable main memory size */
-               unsigned long freeram;   /* Available memory size */
-               unsigned long sharedram; /* Amount of shared memory */
-               unsigned long bufferram; /* Memory used by buffers */
-               unsigned long totalswap; /* Total swap space size */
-               unsigned long freeswap;  /* swap space still available */
-               unsigned short procs;    /* Number of current processes */
-               unsigned long totalhigh; /* Total high memory size */
-               unsigned long freehigh;  /* Available high memory size */
-               unsigned int mem_unit;   /* Memory unit size in bytes */
-               char _f[20-2*sizeof(long)-sizeof(int)]; /* Padding to 64 bytes */
-           };
-
+struct sysinfo memInfo;
 static unsigned long long lastTotalUser, lastTotalUserLow, lastTotalSys, lastTotalIdle;
 
 void init(){
@@ -82,15 +66,25 @@ int main(){
 	}
 	outdata << "Time,CPU used, RAM used, VRAM used" << std::endl;
 	while (true){
-		struct sysinfo info;
-
-		std::cout << info.totalram * info.mem_unit
+		//VirtualMem
+		sysinfo (&memInfo);
+		long long totalVirtualMem = memInfo.totalram;
+		//Add other values in next statement to avoid int overflow on right hand side...
+		totalVirtualMem += memInfo.totalswap;
+		totalVirtualMem *= memInfo.mem_unit;
 		
-		std::cout << info.totalswap * info.mem_unit
-
-		unsigned long physMemUsed = info.totalram * info.mem_unit - info.freeram * info.mem_unit
-
-		unsigned long virtualMemUsed = info.totalswap * info.mem_unit - info.freeswap * info.mem_unit
+		long long virtualMemUsed = memInfo.totalram - memInfo.freeram;
+		//Add other values in next statement to avoid int overflow on right hand side...
+		virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
+		virtualMemUsed *= memInfo.mem_unit;
+		
+		long long totalPhysMem = memInfo.totalram;
+		//Multiply in next statement to avoid int overflow on right hand side...
+		totalPhysMem *= memInfo.mem_unit;
+		
+		long long physMemUsed = memInfo.totalram - memInfo.freeram;
+		//Multiply in next statement to avoid int overflow on right hand side...
+		physMemUsed *= memInfo.mem_unit;
 		
 		double cpuused = getCurrentValue();
 	
